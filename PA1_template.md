@@ -13,7 +13,6 @@ The zip file was downloaded, using the code below
 Code for reading in the dataset and/or processing the data
 
 ```r
-options(scipen = 10)
 download.file(
     url="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip", 
     destfile = "activity.zip")
@@ -21,6 +20,7 @@ download.file(
 
 
 ```r
+options(scipen = 10)
 unzip("activity.zip")
 activity <- read.csv( "activity.csv",  stringsAsFactors = FALSE, na.strings = c("NA"))
 ```
@@ -78,7 +78,8 @@ Only this time, groups will be formed w.r.t interval
 avg.interval.steps <- as.data.frame(
     as.table(tapply(activity$steps, activity$interval, mean, na.rm=TRUE)))
 colnames(avg.interval.steps) <- c("Interval","AvgSteps")
-most.active.interval <- avg.interval.steps[avg.interval.steps$AvgSteps == max(avg.interval.steps$AvgSteps),"Interval"]
+most.active.interval <- avg.interval.steps$Interval[
+    avg.interval.steps$AvgSteps == max(avg.interval.steps$AvgSteps)]
 ```
 As we can see that highest number of steps were recorded in the __835__ interval. 
 
@@ -180,7 +181,7 @@ barplot(x,col="lavender",las=3, ylab="Frequencies",
 
 
 
-From the data we can calculate that the mean of steps taken per day = __1.082121 &times; 10<sup>4</sup>__ and median = __1.1015 &times; 10<sup>4</sup>__.
+From the data we can calculate that the mean of steps taken per day = __10821.2096019__ and median = __11015__.
 
 > So filling up the missing values has increased the mean and median. 
 This is reasonable since Monday is the day having highest activity and we had two Mondays missing from the data.

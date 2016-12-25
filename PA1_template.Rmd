@@ -12,13 +12,13 @@ The data for this assignment was obtained from course web site:
 The zip file was downloaded, using the code below  
 Code for reading in the dataset and/or processing the data
 ```{r eval=FALSE}
-options(scipen = 10)
 download.file(
     url="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip", 
     destfile = "activity.zip")
 ```
 
 ```{R}
+options(scipen = 10)
 unzip("activity.zip")
 activity <- read.csv( "activity.csv",  stringsAsFactors = FALSE, na.strings = c("NA"))
 ```
@@ -71,7 +71,8 @@ Only this time, groups will be formed w.r.t interval
 avg.interval.steps <- as.data.frame(
     as.table(tapply(activity$steps, activity$interval, mean, na.rm=TRUE)))
 colnames(avg.interval.steps) <- c("Interval","AvgSteps")
-most.active.interval <- avg.interval.steps[avg.interval.steps$AvgSteps == max(avg.interval.steps$AvgSteps),"Interval"]
+most.active.interval <- avg.interval.steps$Interval[
+    avg.interval.steps$AvgSteps == max(avg.interval.steps$AvgSteps)]
 ```
 As we can see that highest number of steps were recorded in the __`r most.active.interval`__ interval. 
 
