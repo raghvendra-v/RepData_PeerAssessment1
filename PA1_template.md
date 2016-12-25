@@ -155,8 +155,11 @@ Let's first make a dataset of the filler values and add a new column *"nonNAStep
 filler.values <- tapply(activity$steps,list(activity$weekday, activity$interval)
                         , mean, na.rm=T)
 nonNASteps <- sapply(seq_len(nrow(activity)), 
-                function(x){if(is.na(activity[x,"steps"]))
-                 filler.values[activity[x,"weekday"], activity[x, "interval"]] else                                activity[x,"steps"]})
+                function(x){
+                    if(is.na(activity[x,"steps"]))
+                        filler.values[activity[x,"weekday"], activity[x, "interval"]] 
+                    else
+                        activity[x,"steps"]})
 activity$nonNASteps <- nonNASteps
 ```
 
@@ -225,7 +228,12 @@ activity$dayType[ as.numeric(activity$weekday) >= 6 ] <- "WeekEnd"
 activity$dayType <- as.factor(activity$dayType)
 time.series.by.dayType <- as.data.frame(as.table(tapply(activity$steps, list(activity$dayType,activity$interval), mean, na.rm=T)))
 colnames(time.series.by.dayType) <- c("daytype", "interval", "steps")
-xyplot(log10(steps)~as.integer(as.character(interval))|daytype, data=time.series.by.dayType, type="l", layout=c(1,2), ylab = "", main="steps taken on logarithmic scale", xlab="interval")
+xyplot(
+    log10(steps)~as.integer(as.character(interval))|daytype, 
+    data=time.series.by.dayType, type="l", layout=c(1,2), 
+    ylab = "", main="steps taken on logarithmic scale", 
+    xlab="interval"
+    )
 ```
 
 ![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17-1.png)
