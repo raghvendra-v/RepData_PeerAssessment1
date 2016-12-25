@@ -14,7 +14,9 @@ Code for reading in the dataset and/or processing the data
 
 ```r
 options(scipen = 10)
-download.file(url="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip", destfile = "activity.zip")
+download.file(
+    url="https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip", 
+    destfile = "activity.zip")
 ```
 
 
@@ -35,7 +37,8 @@ Histogram of the total number of steps taken each day
 
 ```r
 day.wise.steps <- tapply(activity$steps, activity$date, sum, na.rm=TRUE)
-range.steps <- split(as.integer(day.wise.steps), cut(as.integer(day.wise.steps), 10, dig.lab = 10))
+range.steps <- split(as.integer(day.wise.steps), 
+                     cut(as.integer(day.wise.steps), 10, dig.lab = 10))
 x <- sapply(range.steps, length)
 par(mar=c(8,1,1,1))
 barplot(x,col="lavender",las=3, ylab="Frequencies", main="histogram of steps per day")
@@ -57,7 +60,9 @@ This can be obtained by calling a combination of tapply and plot functions.
 avg.daily.steps <- as.data.frame(as.table(tapply(activity$steps, activity$date, mean, na.rm=TRUE)))
 colnames(avg.daily.steps) <- c("Date","AvgSteps")
 avg.daily.steps$Date <- as.Date(avg.daily.steps$Date, format="%Y-%m-%d")
-plot(x=avg.daily.steps$Date, y=avg.daily.steps$AvgSteps, pch=20, col="orange", main="Time series plot of the average number of steps taken" , xlab="Date", ylab="Avg. Steps", type="l")
+plot(x=avg.daily.steps$Date, y=avg.daily.steps$AvgSteps, pch=20, 
+     col="orange", main="Time series plot of the average number of steps taken" ,
+     xlab="Date", ylab="Avg. Steps", type="l")
 ```
 
 ![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png)
@@ -70,7 +75,8 @@ Only this time, groups will be formed w.r.t interval
 
 
 ```r
-avg.interval.steps <- as.data.frame(as.table(tapply(activity$steps, activity$interval, mean, na.rm=TRUE)))
+avg.interval.steps <- as.data.frame(
+    as.table(tapply(activity$steps, activity$interval, mean, na.rm=TRUE)))
 colnames(avg.interval.steps) <- c("Interval","AvgSteps")
 most.active.interval <- avg.interval.steps[avg.interval.steps$AvgSteps == max(avg.interval.steps$AvgSteps),"Interval"]
 ```
@@ -84,7 +90,9 @@ __15.0943396%__ of the values are missing.
 Let's see the pattern of the missing values.
 
 ```r
-missing.values <- tapply(activity$steps,format(activity$date, "%a-%d/%m"),function(x)sum(is.na(x)))
+missing.values <- tapply(activity$steps,
+                         format(activity$date, "%a-%d/%m"),
+                            function(x)sum(is.na(x)))
 ylim=range(missing.values)
 #will remove all the dates with no missing values
 missing.values <- missing.values[-which(missing.values == 0)]
@@ -120,7 +128,10 @@ To find this information we will have to correlate the activity on a weekday acr
 
 ```r
 activity$weekNum <- as.factor(format(activity$date,"%U"))
-activity$weekday <- factor(format(activity$date,"%a"), labels=c("Mon","Tue","Wed","Thu", "Fri", "Sat", "Sun"))
+activity$weekday <- factor(
+                            format(activity$date,"%a"), 
+                            labels=c("Mon","Tue","Wed","Thu", "Fri", "Sat", "Sun")
+                            )
 par(mfrow=c(3,3),mar=c(2,2,2,2))
 for ( weekD in levels(activity$weekday)) {
     act <- subset(activity, weekday == weekD) 
@@ -138,11 +149,14 @@ So, we see faint patterns indicated by streaks of yellow. This is being followed
 
 > Hence the strategy to input the missing data should be to insert the average of the activity for that interval from other same weekdays.
 
-Let's first make a dataset of the filler values and add a new column "nonNASteps" will all non NA values
+Let's first make a dataset of the filler values and add a new column *"nonNASteps"* will all non NA values
 
 ```r
-filler.values <- tapply(activity$steps,list(activity$weekday, activity$interval), mean, na.rm=T)
-nonNASteps <- sapply(seq_len(nrow(activity)), function(x){if(is.na(activity[x,"steps"])) filler.values[activity[x,"weekday"], activity[x, "interval"]] else activity[x,"steps"]})
+filler.values <- tapply(activity$steps,list(activity$weekday, activity$interval)
+                        , mean, na.rm=T)
+nonNASteps <- sapply(seq_len(nrow(activity)), 
+                function(x){if(is.na(activity[x,"steps"]))
+                 filler.values[activity[x,"weekday"], activity[x, "interval"]] else                                activity[x,"steps"]})
 activity$nonNASteps <- nonNASteps
 ```
 
@@ -150,13 +164,16 @@ Histogram of the total number of steps taken each day
 
 ```r
 day.wise.steps <- tapply(activity$nonNASteps, activity$date, sum)
-range.steps <- split(as.integer(day.wise.steps), cut(as.integer(day.wise.steps), 10, dig.lab = 10))
+range.steps <- split(as.integer(day.wise.steps), 
+                     cut(as.integer(day.wise.steps), 10, dig.lab = 10))
 x <- sapply(range.steps, length)
 par(mfrow=c(1,1), mar=c(8,1,1,1))
-barplot(x,col="lavender",las=3, ylab="Frequencies", main="histogram of steps per day")
+barplot(x,col="lavender",las=3, ylab="Frequencies",
+        main="histogram of steps per day")
 ```
 
 ![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png)
+
 
 
 
@@ -167,7 +184,10 @@ This is reasonable since Monday is the day having highest activity and we had tw
 
 
 ```r
-c("Steps/day(avg)"=mean(activity$steps, na.rm=T), tapply(activity$steps,list(activity$weekday), mean, na.rm=T))
+c(
+    "Steps/day(avg)"=mean(activity$steps, na.rm=T),
+    tapply(activity$steps,list(activity$weekday), mean, na.rm=T)
+)
 ```
 
 ```
