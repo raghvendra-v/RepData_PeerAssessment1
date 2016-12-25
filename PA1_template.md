@@ -30,6 +30,7 @@ to fill x-axis later. The axis labels of x axis are set vertical to fit in graph
 
 ```r
 activity$date <- as.Date(activity$date, "%Y-%m-%d")
+activity$interval <- as.factor(activity$interval)
 ```
 
 
@@ -57,28 +58,22 @@ Time series plot of the average number of steps taken
 This can be obtained by calling a combination of tapply and plot functions.
 
 ```r
-avg.daily.steps <- as.data.frame(as.table(tapply(activity$steps, activity$interval, mean, na.rm=TRUE)))
-colnames(avg.daily.steps) <- c("Interval","AvgSteps")
-plot(x=avg.daily.steps$Interval, y=avg.daily.steps$AvgSteps,
+avg.steps.per.interval <- as.data.frame(as.table(tapply(activity$steps, activity$interval, mean, na.rm=TRUE)))
+colnames(avg.steps.per.interval) <- c("Interval","AvgSteps")
+plot(x=as.numeric(avg.steps.per.interval$Interval), y=avg.steps.per.interval$AvgSteps,
      main="Time series plot of the average number of steps taken" ,
-     xlab="Interval", ylab="Avg. Steps")
+     xlab="Interval", ylab="Avg. Steps", type="l", col="orange",xaxt="n")
+axis(1, at=seq_len(nlevels(avg.steps.per.interval$Interval)), labels = levels(avg.steps.per.interval$Interval))
 ```
 
 ![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png)
 
-
-
 The 5-minute interval that, on average, contains the maximum number of steps
-Now we will have to find average of steps per interval. time to call tapply again.
-Only this time, groups will be formed w.r.t interval
 
 
 ```r
-avg.interval.steps <- as.data.frame(
-    as.table(tapply(activity$steps, activity$interval, mean, na.rm=TRUE)))
-colnames(avg.interval.steps) <- c("Interval","AvgSteps")
-most.active.interval <- avg.interval.steps$Interval[
-    avg.interval.steps$AvgSteps == max(avg.interval.steps$AvgSteps)]
+most.active.interval <- avg.steps.per.interval$Interval[
+    avg.steps.per.interval$AvgSteps == max(avg.steps.per.interval$AvgSteps)]
 ```
 As we can see that highest number of steps were recorded in the __835__ interval. 
 
@@ -111,7 +106,6 @@ So, Lets draw a heat map of the activity.
 #### A heat map of activity with intervals laid on y-axis and days on x-axis
 
 ```r
-activity$interval <- as.factor(activity$interval)
 z <- matrix(activity$steps[order(activity$date,activity$interval)], nrow=length(unique(activity$date)), ncol=nlevels(activity$interval), byrow = TRUE)
 dimnames(z)[[1]] <- format(sort(unique(activity$date)),"%a-%d/%m")
 dimnames(z)[[2]] <- levels(activity$interval)
