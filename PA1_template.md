@@ -57,12 +57,11 @@ Time series plot of the average number of steps taken
 This can be obtained by calling a combination of tapply and plot functions.
 
 ```r
-avg.daily.steps <- as.data.frame(as.table(tapply(activity$steps, activity$date, mean, na.rm=TRUE)))
-colnames(avg.daily.steps) <- c("Date","AvgSteps")
-avg.daily.steps$Date <- as.Date(avg.daily.steps$Date, format="%Y-%m-%d")
-plot(x=avg.daily.steps$Date, y=avg.daily.steps$AvgSteps, pch=20, 
-     col="orange", main="Time series plot of the average number of steps taken" ,
-     xlab="Date", ylab="Avg. Steps", type="l")
+avg.daily.steps <- as.data.frame(as.table(tapply(activity$steps, activity$interval, mean, na.rm=TRUE)))
+colnames(avg.daily.steps) <- c("Interval","AvgSteps")
+plot(x=avg.daily.steps$Interval, y=avg.daily.steps$AvgSteps,
+     main="Time series plot of the average number of steps taken" ,
+     xlab="Interval", ylab="Avg. Steps")
 ```
 
 ![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png)

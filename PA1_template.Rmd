@@ -53,26 +53,18 @@ From the data we can calculate that the mean of steps taken per day = __`r mean(
 Time series plot of the average number of steps taken  
 This can be obtained by calling a combination of tapply and plot functions.
 ```{r}
-avg.daily.steps <- as.data.frame(as.table(tapply(activity$steps, activity$date, mean, na.rm=TRUE)))
-colnames(avg.daily.steps) <- c("Date","AvgSteps")
-avg.daily.steps$Date <- as.Date(avg.daily.steps$Date, format="%Y-%m-%d")
-plot(x=avg.daily.steps$Date, y=avg.daily.steps$AvgSteps, pch=20, 
-     col="orange", main="Time series plot of the average number of steps taken" ,
-     xlab="Date", ylab="Avg. Steps", type="l")
+avg.steps.per.interval <- as.data.frame(as.table(tapply(activity$steps, activity$interval, mean, na.rm=TRUE)))
+colnames(avg.steps.per.interval) <- c("Interval","AvgSteps")
+plot(x=avg.steps.per.interval$Interval, y=avg.steps.per.interval$AvgSteps,
+     main="Time series plot of the average number of steps taken" ,
+     xlab="Interval", ylab="Avg. Steps", type="l")
 ```
 
-
-
 The 5-minute interval that, on average, contains the maximum number of steps
-Now we will have to find average of steps per interval. time to call tapply again.
-Only this time, groups will be formed w.r.t interval
 
 ```{r}
-avg.interval.steps <- as.data.frame(
-    as.table(tapply(activity$steps, activity$interval, mean, na.rm=TRUE)))
-colnames(avg.interval.steps) <- c("Interval","AvgSteps")
-most.active.interval <- avg.interval.steps$Interval[
-    avg.interval.steps$AvgSteps == max(avg.interval.steps$AvgSteps)]
+most.active.interval <- avg.steps.per.interval$Interval[
+    avg.steps.per.interval$AvgSteps == max(avg.steps.per.interval$AvgSteps)]
 ```
 As we can see that highest number of steps were recorded in the __`r most.active.interval`__ interval. 
 
